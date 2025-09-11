@@ -32,4 +32,11 @@ if __name__ == "__main__":
            .add_param("page", 1)
            .build())
 
+    # or you can call the functions like this also
+    builder = URLBuilder()
+    builder.set_scheme("https")
+    builder.set_host("example.com")
+    builder.add_param("q", "python")
+    url = builder.build()
+
     print("URL: ", url)

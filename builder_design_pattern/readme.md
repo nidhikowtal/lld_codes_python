@@ -21,8 +21,7 @@ For example:
 
 This issue is known as the **Telescoping Constructor Problem**.  
 
-### Example
-# Example: URL object with many parameters
+### Example of Telescoping Constructor
 url = URL("https", "example.com", 443, "search", {"q": "builder pattern", "lang": "python"}, "section1")
 
 ---
@@ -36,6 +35,18 @@ Instead of stuffing everything into one constructor, the builder pattern lets yo
 - Build different **representations** of the same object.  
 
 The final object can also be made **immutable**, since all modifications happen during the build process.  
+
+
+---
+
+## 🔹 Returning `self`
+
+Every setter returns the builder itself (`return self`).  
+
+This enables **method chaining** so multiple methods can be called in one fluent line.  
+
+### Example
+URLBuilder().set_scheme("https").set_host("example.com").add_param("q", "python")
 
 ---
 
