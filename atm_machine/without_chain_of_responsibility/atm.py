@@ -22,11 +22,9 @@ class HasCardState(ATMState):
     def authenticate_pin(self, atm, card, pin):
         if card.pin == pin:
             print("✅ PIN verified successfully.")
-            atm.is_authenticated = True
             atm.set_state(atm.select_operation_state)
         else:
             print("❌ Invalid PIN. Card ejected.")
-            atm.is_authenticated = False
             atm.set_state(atm.idle_state)
 
     def select_operation(self, atm, operation): 
@@ -44,10 +42,6 @@ class SelectOperationState(ATMState):
         print("⚠️ PIN already verified.")
 
     def select_operation(self, atm, operation):
-        if not atm.is_authenticated:
-            print("⚠️ Please authenticate first.")
-            return
-
         if operation == "WITHDRAW":
             print("💰 Withdrawal selected.")
             atm.set_state(atm.cash_withdraw_state)
@@ -80,7 +74,6 @@ class CashWithdrawState(ATMState):
             print("❌ Insufficient funds.")
 
         print("💳 Please collect your card.")
-        atm.is_authenticated = False
         atm.set_state(atm.idle_state)
 
 
@@ -93,7 +86,6 @@ class ATM:
 
         self.state = self.idle_state
         self.balance = initial_balance
-        self.is_authenticated = False
 
     def set_state(self, new_state):
         self.state = new_state
