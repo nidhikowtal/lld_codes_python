@@ -1,9 +1,21 @@
+from enum import Enum
+
+# ----------------- Enums -----------------
+
+class PieceType(Enum):
+    X = "X"
+    O = "O"
+
+
 # ----------------- Models -----------------
 
 class Player:
-    def __init__(self, name, piece_type):
+    def __init__(self, name, piece_type: PieceType):
         self.name = name
-        self.piece_type = piece_type  # 'X' or 'O'
+        self.piece_type = piece_type  # PieceType Enum
+
+    def __str__(self):
+        return f"{self.name} ({self.piece_type.value})"
 
 
 class Board:
@@ -30,7 +42,7 @@ class Board:
             row_display = []
             for j in range(self.size):
                 if self.board[i][j]:
-                    row_display.append(self.board[i][j])
+                    row_display.append(self.board[i][j].value)  # 👈 Enum value
                 else:
                     row_display.append(" ")
             print(" | ".join(row_display))
@@ -51,7 +63,7 @@ class TicTacToeGame:
         while not self.winner:
             for player in self.players:
                 valid_move = False
-                while not valid_move:  # keep asking until a valid move
+                while not valid_move:
                     self.board.print_board()
 
                     free_cells = self.board.get_free_cells()
@@ -60,7 +72,7 @@ class TicTacToeGame:
                         return
 
                     try:
-                        move = input(f"{player.name} ({player.piece_type}), enter row,column: ")
+                        move = input(f"{player} enter row,column: ")
                         if move.lower() in ["exit", "q"]:
                             print("Game exited by user.")
                             return
@@ -69,19 +81,23 @@ class TicTacToeGame:
                         print("Invalid input, enter row,column like '0,2'.")
                         continue
 
+                    if not (0 <= row < self.board.size and 0 <= col < self.board.size):
+                        print("Move out of bounds! Try again.")
+                        continue
+
                     if not self.board.add_piece(row, col, player.piece_type):
                         print("Cell already occupied, choose another cell.")
                         continue
 
-                    valid_move = True  # valid move made
+                    valid_move = True
 
                     if self.is_winner(row, col, player.piece_type):
                         self.board.print_board()
                         self.winner = player
-                        print(f"🏆 Winner is {player.name}")
+                        print(f"🏆 Winner is {player.name} ({player.piece_type.value})")
                         return
-                    
-    def is_winner(self, row, col, piece_type):
+
+    def is_winner(self, row, col, piece_type: PieceType):
         size = self.board.size
 
         # Check row
@@ -107,12 +123,11 @@ class TicTacToeGame:
 
 # ------------------- Example Static Input -------------------
 
-# Create board and players before the game
 board = Board(size=3)
-players = [Player("P1", "X"), Player("P2", "O")]
+players = [
+    Player("P1", PieceType.X),
+    Player("P2", PieceType.O)
+]
 
-# Initialize game
 game = TicTacToeGame(board, players)
-
-# Start game
 game.play()
